@@ -1,83 +1,89 @@
 import re
+import json
 import spacy
 from langdetect import detect
 from deep_translator import GoogleTranslator
 
-# Carregar modelo do spaCy
+# ======================
+# Inicialização
+# ======================
+
 nlp = spacy.load("en_core_web_sm")
 
-# -------------------------
-# Funções auxiliares
-# -------------------------
+# ======================
+# Funções utilitárias
+# ======================
 
-def identificarlang(texto):
+def identificar_idioma(texto: str) -> str:
     return detect(texto)
 
-def traduzirtext(texto, destino="pt"):
-    try:
-        return GoogleTranslator(source="auto", target=destino).translate(texto)
-    except:
-        return texto
+def traduzir(texto: str, destino: str = "pt") -> str:
+    return GoogleTranslator(source="auto", target=destino).translate(texto)
 
-def limpar_palavra(palavra):
-    palavra = palavra.lower()
-    palavra = re.sub(r"[^\w']", "", palavra)
-    return palavra
+def limpar_palavra(palavra: str) -> str:
+    return re.sub(r"[^\w']", "", palavra.lower())
 
-def gerar_exemplo(token):
-    if token["pos"] == "NOUN":
-        return f"This is my {token['lemma']}."
-    
-    if token["pos"] == "VERB":
-        return f"I {token['lemma']} every day."
+# ======================
+# Exemplos (MVP seguro)
+# ======================
 
+def gerar_exemplo(lemma: str, pos: str):
+    if pos == "NOUN":
+        return f"This is my {lemma}."
+    if pos == "VERB":
+        return f"I {lemma} every day."
     return None
 
-# -------------------------
-# Função principal
-# -------------------------
+# ======================
+# ENGINE PRINCIPAL
+# ======================
 
-def process_text(text):
-    idioma = identificarlang(text)
-    doc = nlp(text)
+def analyze_text(text: str) -> dict:
+    idioma = identificar_idioma(text)
+    palavras = re.findall(r"\b\w+\b", text)
 
-    word_objects = []
+    resultado = {
+        "language": idioma,
+        "words": {}
+    }
 
-    for token in doc:
-        if token.is_punct or token.is_space:
-            continue
+    for palavra in palavras:
+        clean = limpar_palavra(palavra)
+        doc = nlp(clean)
+        token = doc[0]
 
-        clean = limpar_palavra(token.text)
+        lemma = token.lemma_
+        pos = token.pos_
 
-        translation = (
-            traduzirtext(clean)
-            if idioma != "pt"
-            else clean
-        )
+        if lemma not in resultado["words"]:
+            traducao = traduzir(lemma) if idioma != "pt" else lemma
 
-        word_data = {
-            "original": token.text,
-            "clean": clean,
-            "lemma": token.lemma_,
-            "pos": token.pos_,
-            "translation": translation,
-            "examples": []
-        }
+            entrada = {
+                "originals": [palavra],
+                "clean": clean,
+                "lemma": lemma,
+                "pos": pos,
+                "translation": traducao,
+                "examples": [],
+                "count": 1
+            }
 
-        exemplo = gerar_exemplo(word_data)
-        if exemplo:
-            word_data["examples"].append(exemplo)
+            exemplo = gerar_exemplo(lemma, pos)
+            if exemplo:
+                entrada["examples"].append(exemplo)
 
-        word_objects.append(word_data)
+            resultado["words"][lemma] = entrada
+        else:
+            resultado["words"][lemma]["originals"].append(palavra)
+            resultado["words"][lemma]["count"] += 1
 
-    return word_objects
+    return resultado
 
-# -------------------------
-# Teste
-# -------------------------
+# ======================
+# Teste local
+# ======================
 
-texto = input("Digite algo em inglês: ")
-resultado = process_text(texto)
-
-for w in resultado:
-    print(w)
+if __name__ == "__main__":
+    texto = input("Digite algo em inglês: ")
+    resultado = analyze_text(texto)
+    print(json.dumps(resultado, indent=2, ensure_ascii=False))
