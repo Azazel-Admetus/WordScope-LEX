@@ -8,30 +8,66 @@ textarea {
   height: 100px;
 }
 
-.word {
-  cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 4px;
-}
-
-.hidden {
-  display: none;
-}
-
-.modal-content {
-  background: #fff;
-  padding: 15px;
-  border: 1px solid #ccc;
-}
-
-#modal {
+.modal {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.4);
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 999;
 }
-#modal.hidden {
+
+.modal.hidden {
   display: none;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 1.2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 420px;
+  position: relative;
+}
+
+#closeModal {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  border: none;
+  background: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.modal-pos {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.modal-translation {
+  font-weight: bold;
+  margin: 0.5rem 0;
+}
+
+.modal-example {
+  background: #f6f6f6;
+  padding: 0.6rem;
+  border-radius: 8px;
+  margin: 0.6rem 0;
+}
+
+.example-en {
+  font-style: italic;
+}
+
+.example-pt {
+  color: #444;
+  font-size: 0.9rem;
+}
+
+.modal-explanation {
+  font-size: 0.95rem;
+  line-height: 1.4;
 }

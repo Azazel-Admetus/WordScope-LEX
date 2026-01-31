@@ -5,7 +5,7 @@ const inputText = document.getElementById("inputText");
 const outputDiv = document.getElementById("outputText");
 const translatedDiv = document.getElementById("translatedText");
 
-const modal = document.getElementById("modal");
+const modal = document.getElementById("wordModal");
 const closeModal = document.getElementById("closeModal");
 
 analyzeBtn.addEventListener("click", async () => {
@@ -30,11 +30,13 @@ function renderResult(data) {
 
   data.tokens.forEach(token => {
     if (!token.is_alpha) {
-      lastRendered = null; // pontuação reseta
+      lastRendered = null;
       return;
     }
 
     const word = data.words[token.lemma];
+    if (!word) return;
+
     const lower = token.text.toLowerCase();
 
     if (
@@ -47,6 +49,7 @@ function renderResult(data) {
     const span = document.createElement("span");
     span.textContent = token.text + " ";
     span.className = "word";
+    span.style.cursor = "pointer";
     span.style.backgroundColor = getColor(token.pos);
     span.onclick = () => openModal(word);
 
@@ -57,23 +60,30 @@ function renderResult(data) {
 
 function openModal(word) {
   document.getElementById("modalWord").textContent = word.lemma;
-  document.getElementById("modalPos").textContent = `${word.pos.en} / ${word.pos.pt}`;
+  document.getElementById("modalPos").textContent = word.pos.pt;
   document.getElementById("modalTranslation").textContent = word.translation;
 
-  const list = document.getElementById("modalExamples");
-  list.innerHTML = "";
+  document.getElementById("modalExampleEn").textContent =
+    word.example?.text || "";
 
-  word.examples.forEach(ex => {
-    const li = document.createElement("li");
-    li.textContent = ex.text;
-    list.appendChild(li);
-  });
+  document.getElementById("modalExamplePt").textContent =
+    word.example?.translation || "";
+
+  document.getElementById("modalExplanation").textContent =
+    word.explanation || "";
 
   modal.classList.remove("hidden");
 }
 
-closeModal.onclick = () => modal.classList.add("hidden");
+closeModal.onclick = () => {
+  modal.classList.add("hidden");
+};
 
+modal.onclick = (e) => {
+  if (e.target === modal) {
+    modal.classList.add("hidden");
+  }
+};
 function getColor(pos) {
   const colors = {
     NOUN: "#A5D6A7",

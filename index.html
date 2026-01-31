@@ -19,17 +19,23 @@
   <div id="outputText"></div>
 
   <!-- Modal -->
-  <div id="modal" class="hidden">
-    <div class="modal-content">
-      <h3 id="modalWord"></h3>
-      <p><strong>Classe:</strong> <span id="modalPos"></span></p>
-      <p><strong>Tradução:</strong> <span id="modalTranslation"></span></p>
-
-      <ul id="modalExamples"></ul>
-
-      <button id="closeModal">Fechar</button>
+    <div id="wordModal" class="modal hidden">
+      <div class="modal-content">
+        <button id="closeModal">×</button>
+    
+        <h2 id="modalWord"></h2>
+        <p class="modal-pos" id="modalPos"></p>
+    
+        <p class="modal-translation" id="modalTranslation"></p>
+    
+        <div class="modal-example">
+          <p class="example-en" id="modalExampleEn"></p>
+          <p class="example-pt" id="modalExamplePt"></p>
+        </div>
+    
+        <p class="modal-explanation" id="modalExplanation"></p>
+      </div>
     </div>
-  </div>
 
   <script src="js/script.js"></script>
 </body>
