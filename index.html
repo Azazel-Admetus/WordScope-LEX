@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>WordScope MVP</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <h2>WordScope</h2>
+
+  <textarea id="inputText" placeholder="Cole um texto em inglês"></textarea>
+  <br />
+  <button id="analyzeBtn">Analisar</button>
+
+  <hr />
+
+  <div id="translatedText"></div>
+  <div id="outputText"></div>
+
+  <!-- Modal -->
+  <div id="modal" class="hidden">
+    <div class="modal-content">
+      <h3 id="modalWord"></h3>
+      <p><strong>Classe:</strong> <span id="modalPos"></span></p>
+      <p><strong>Tradução:</strong> <span id="modalTranslation"></span></p>
+
+      <ul id="modalExamples"></ul>
+
+      <button id="closeModal">Fechar</button>
+    </div>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
